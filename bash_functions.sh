@@ -63,15 +63,15 @@ mkv_default_track_batch() {
     read -p "Choose a track number: " track_num
     read -p "Set the track number as default? (0,1): " track_default
 
-    find -type f -iname "*.mkv" | while read film
-        do
-            mkvpropedit "$film" --edit track:$track_type$track_num --set flag-default=$track_default
-        done
+    find -type f -iname "*.mkv" | while read film; do
+        mkvpropedit "$film" --edit track:$track_type$track_num --set flag-default=$track_default
+    done
 }
 
 downsample_video_audio() {
     mkdir Muxed
-    find -type f -iname "$1" | parallel ffmpeg -y -i "{}" -map 0 -c copy -c:a:0 aac -b:a:0 256k -ac 2 "Muxed/{}"
+    find -type f -iname "$1" \
+        | parallel ffmpeg -y -i "{}" -map 0 -c copy -c:a:0 aac -b:a:0 256k -ac 2 "Muxed/{}"
 }
 
 to_mkv() {
@@ -84,13 +84,15 @@ remove_tracks() {
 
 batch_remove_tracks() {
     # Audio and Subtitle tracks not chosen by $1 and $2 will be removed
-    find -type f -iname "*.mkv" | parallel mkvmerge -o "Muxed/{}" -a $1 -s $2 "{}"
+    find -type f -iname "*.mkv" \
+        | parallel mkvmerge -o "Muxed/{}" -a $1 -s $2 "{}"
 }
 
 add_subs() {
     local video_ext=""
-    read -p "Video File Extension Type: " videoExt
-    find -type f -iname "*.$videoExt" | parallel mkvmerge -o "Muxed/{.}.mkv" "{}" "{.}"*.srt
+    read -p "Video File Extension Type: " video_ext
+    find -type f -iname "*.$videoExt" \
+        | parallel mkvmerge -o "Muxed/{.}.mkv" "{}" "{.}"*.srt
 }
 
 to_jxl() {
@@ -117,8 +119,7 @@ fi
 
 video_state() {
     # $1 The file containing the list of videos
-    cat $1 | while read video
-    do
+    cat $1 | while read video; do
         if [[ -f "$video" ]] then
             mv "$video" "$video".bak
             echo "Disabled $video"
@@ -140,8 +141,7 @@ rencode_10() {
         mkdir $dest
     fi
 
-    find -type f -name "*.$1" | while read video
-    do
+    find -type f -name "*.$1" | while read video; do
         ffmpeg -nostdin -vaapi_device /dev/dri/renderD128 -i "$video" -vf 'format=nv12,hwupload' -c:v av1_vaapi -b:v 10M -c:a copy "$dest/${video%.*}.mkv"
     done
 }
@@ -168,7 +168,6 @@ tag_music() {
         echo "Argument must be title or album"
     esac
 }
-
 
 # Removes Dolby Vision from MKV HEVC HDR files
 # $1 file name of the video
@@ -205,19 +204,19 @@ download_protonge() {
     mkdir "$dest"
     tar -xf GE-Proton*.tar.gz -C "$dest" --strip-components 1
     ln -s $HOME/Sync/Config/Gaming/Steam/user_settings.py "$dest"/user_settings.py
-    rm GE-Proton*.tar.gz
+    rm ./GE-Proton*.tar.gz
 }
 
 download_dxvk() {
     github_download .gz "https://api.github.com/repos/doitsujin/dxvk/releases/latest"
     tar -xf dxvk*.tar.gz -C $HOME/Games/DirectX/DXVK --strip-components 1
-    rm dxvk*.tar.gz
+    rm ./dxvk*.tar.gz
 }
 
 download_vkd3d-proton() {
     github_download .zst "https://api.github.com/repos/HansKristian-Work/vkd3d-proton/releases/latest"
     tar -xf vkd3d*.tar.zst -C $HOME/Games/DirectX/VKD3D-Proton --strip-components 1
-    rm vkd3d*.tar.zst
+    rm ./vkd3d*.tar.zst
 }
 
 # Gaming-GPU
