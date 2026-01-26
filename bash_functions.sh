@@ -18,24 +18,6 @@ to_zst() {
     tar -I "zstd --ultra -22 -T$(nproc)" -cf $1.tar.zst $1
 }
 
-delete() {
-    if [[ -d "$1" ]] then
-        rm -r "$1"
-        if [[ -d "$1" ]] then
-            sudo rm -r "$1"
-        fi
-        echo "Deleted folder $1"
-    elif [[ -f "$1" ]] then
-        rm "$1"
-        if [[ -f "$1" ]] then
-            sudo rm "$1"
-        fi
-        echo "Deleted file $1"
-    else
-        echo "$1 not found"
-    fi
-}
-
 docker_kill() {
     docker kill $1
     docker rm $1
