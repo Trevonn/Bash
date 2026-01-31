@@ -265,7 +265,7 @@ if [[ -f /usr/bin/pkgctl ]] then
         download_arch_package $kernel
         cd $kernel
         patch_kernel $kernel
-        makepkg -s --skipinteg --asdeps
+        time makepkg -s --skipinteg --asdeps
         cd ../
         sudo rm -r $kernel
     }
