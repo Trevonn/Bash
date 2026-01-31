@@ -117,21 +117,6 @@ fi
 
 # Media
 
-video_state() {
-    # $1 The file containing the list of videos
-    cat $1 | while read video; do
-        if [[ -f "$video" ]] then
-            mv "$video" "$video".bak
-            echo "Disabled $video"
-        elif [[ -f "$video.bak" ]] then
-            mv "$video".bak "$video"
-            echo "Restored $video"
-        else
-            echo "Video not found: $video"
-        fi
-    done
-}
-
 rencode_10() {
     # if the input file is mkv output the file in a different directory
     if [[ $1 != "mkv" ]] then
