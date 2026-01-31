@@ -46,25 +46,38 @@ download_music() {
     yt-dlp --format 251 --extract-audio --audio-format "opus" $1 -o "%(title)s.%(ext)s"
 }
 
+
+#######################################
+# Change default tracks of a single mkv file
+# Globals:
+# Arguments:
+#   $1 - mkv file
+#   $2 - track type - a or s
+#   $3 - track number
+#   $4 - track default - 0 or 1
+#######################################
 mkv_default_track() {
-    mkvpropedit $1 --edit track:$2$3 --set flag-default=$4 --set flag-forced=$5
+    mkvpropedit "$1" --edit track:$2$3 --set flag-default=$4
 }
 
+#######################################
+# Change default tracks of multiple MKV files
+# Globals:
+# Arguments:
+#   $1 - track type - a or s
+#   $2 - track number - integer
+#   $3 - track default - 0 or 1
+#######################################
 mkv_default_track_batch() {
-    echo "MKV Default Track Changer Batch 1.0"
-    echo "This script lets you change the default track properties in an MKV"
-    echo
+    local videos=()
     local track_type=""
     local track_num=""
     local track_default=""
 
-    echo "MKV Default Track Selector"
-    read -p "Default track type: audio or subtitle (a/s): " track_type
-    read -p "Choose a track number: " track_num
-    read -p "Set the track number as default? (0,1): " track_default
+    readarray -t videos < <(find -type f -iname "*.mkv")
 
-    find -type f -iname "*.mkv" | while read film; do
-        mkvpropedit "$film" --edit track:$track_type$track_num --set flag-default=$track_default
+    for video in "${videos[@]}"; do
+        mkv_default_track "$video" $1 $2 $3
     done
 }
 
