@@ -3,6 +3,7 @@
 # General
 
 mkcd() {
+    # $1 = directory name
     mkdir -p -- "$1" && cd -P -- "$1"
 }
 
