@@ -14,13 +14,13 @@ crom() {
 crom_batch() {
     case $1 in
     "dvd")
-        find -type f -iname "*.iso" -or -iname "*.bin" | parallel chdman createdvd -f -i "{}" -o "{.}.chd" 
+        find -type f -iname "*.iso" -or -iname "*.bin" | parallel chdman createdvd -f -i "{}" -o "{.}.chd"
         ;;
     "cd")
-        find -type f -iname "*.cue" | parallel chdman createcd -f -i "{}" -o "{.}.chd" 
+        find -type f -iname "*.cue" | parallel chdman createcd -f -i "{}" -o "{.}.chd"
         ;;
     "7z")
-        find -type f -iname "*.$2" | parallel --bar 7z a -mx9 "{.}.7z" "{}" 
+        find -type f -iname "*.$2" | parallel --bar 7z a -mx9 "{.}.7z" "{}"
         ;;
     *)
         echo "Incorrect or no option chosen"
