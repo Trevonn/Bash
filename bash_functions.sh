@@ -131,6 +131,7 @@ fi
 # Media
 
 rencode_10() {
+    # $1 Video file type
     # if the input file is mkv output the file in a different directory
     if [[ $1 != "mkv" ]] then
         dest="."
