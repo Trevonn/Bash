@@ -3,7 +3,7 @@
 # General
 
 mkcd() {
-    # $1 = directory name
+    # $1 - directory name
     mkdir -p -- "$1" && cd -P -- "$1"
 }
 
@@ -20,6 +20,7 @@ to_zst() {
 }
 
 docker_kill() {
+    # $1 - Container ID
     docker kill $1
     docker rm $1
     docker container prune
