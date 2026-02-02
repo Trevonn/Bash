@@ -28,7 +28,7 @@ if [[ -f /usr/bin/docker ]] then
     }
 
     docker_update() {
-        docker_file="$SYNC_DIR/Scripts/Docker/docker-compose.yaml"
+        docker_file="$HOME/Sync/Scripts/Docker/docker-compose.yaml"
         docker-compose -f $docker_file pull
         docker-compose -f $docker_file up -d
         docker image prune -af
@@ -43,6 +43,10 @@ if [[ -f /usr/bin/flatpak ]] then
         rm -r $XDG_STATE_HOME/flatpak
         sudo rm -r /var/lib/flatpak
         sudo pacman -Rncs flatpak
+    }
+
+    remove_flatpak_app() {
+        flatpak uninstall $1 --delete-data
     }
 fi
 
@@ -67,7 +71,7 @@ if [[ -f /usr/bin/pacman ]] then
         }
 
         patch_kernel() {
-            local patches="$SYNC_DIR/Config/Kernel/$1"
+            local patches="$HOME/Sync/Config/Kernel/$1"
             cp $patches/tsc.patch tsc.patch
             patch -i $patches/PKGBUILD.patch PKGBUILD
         }
@@ -173,37 +177,12 @@ if [[ -f /usr/bin/ffmpeg ]] then
             ffmpeg -nostdin -vaapi_device /dev/dri/renderD128 -i "$video" -vf 'format=nv12,hwupload' -c:v av1_vaapi -b:v 10M -c:a copy "$dest/${video%.*}.mkv"
         done
     }
-
-    to_flac() {
-        find -type f -iname "*.$1" | parallel ffmpeg -i "{}" -c:a flac -sample_fmt s32 "{.}.flac"
-    }
-
-    # Bulk converts flac files to opus files
-    # $1 bitrate of the opus file. For example 160000
-    flac_to_opus() {
-        find -type f -iname "*.flac" | parallel ffmpeg -i "{}" -c:a libopus -b:a $1 "{.}.opus"
-    }
 fi
 
 
 if [[ -f /usr/bin/cjxl ]] then
     to_jxl() {
         find -type f -iname "*.$1" | parallel cjxl "{}" "{.}.jxl"
-    }
-fi
-
-if [[ -f /usr/bin/kid3-cli ]] then
-    tag_music() {
-        case $1 in
-        "title")
-            kid3-cli -c "select *.opus" -c "totag '%{title}' 2"
-            ;;
-        "album")
-            kid3-cli -c "select *.opus" -c "set Album '$2'"
-            ;;
-        *)
-            echo "Argument must be title or album"
-        esac
     }
 fi
 
@@ -224,7 +203,7 @@ fi
 # Extracts mounted PS3 disc to the RPCS3 disc folder
 # $1 Name of the game
 extract_ps3_disc() {
-    local dest=$ROMS_DIR/Sony/PS3/games/"$1"
+    local dest=$HOME/Games/Emulation/ROMS/Sony/PS3/games/"$1"
     rsync -ahW --info=progress2 --no-compress --mkpath --chmod=755 {PS3_GAME,PS3_DISC.SFB} "$dest"
 }
 
