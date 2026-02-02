@@ -243,19 +243,7 @@ download_protonge() {
     rm ./GE-Proton*.tar.gz
 }
 
-download_dxvk() {
-    github_download .gz "https://api.github.com/repos/doitsujin/dxvk/releases/latest"
-    tar -xf dxvk*.tar.gz -C $HOME/Games/DirectX/DXVK --strip-components 1
-    rm ./dxvk*.tar.gz
-}
-
-download_vkd3d-proton() {
-    github_download .zst "https://api.github.com/repos/HansKristian-Work/vkd3d-proton/releases/latest"
-    tar -xf vkd3d*.tar.zst -C $HOME/Games/DirectX/VKD3D-Proton --strip-components 1
-    rm ./vkd3d*.tar.zst
-}
-
-# Gaming-GPU
+# Gaming - GPU
 
 change_gpu_state() {
     local gpu_level="/sys/class/drm/card1/device/power_dpm_force_performance_level"
