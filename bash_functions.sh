@@ -234,7 +234,7 @@ github_download() {
 }
 
 download_protonge() {
-    local dest="$XDG_STATE_HOME/Steam/compatibilitytools.d/GE-Proton-latest"
+    local dest="$XDG_DATA_HOME/Steam/compatibilitytools.d/GE-Proton-latest"
     rm -rf "$dest"
     github_download .tar.gz "https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest"
     mkdir "$dest"
