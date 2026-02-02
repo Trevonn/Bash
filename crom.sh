@@ -4,14 +4,14 @@
 
 if [[ -f /usr/bin/chdman ]] then
     # Compress a single rom file
-    # $1 dvd or cd
-    # $2 source file
+    # $1 - Compression Method (dvd or cd)
+    # $2 - Source file
     crom() {
         chdman create$1 -f -i "$2" -o "${2%.*}.chd"
     }
 
     # Compresses multiple rom files at once
-    # $1 source file
+    # $1 - Compression Method (dvd, cd or 7z)
     crom_batch() {
         case $1 in
         "dvd")
