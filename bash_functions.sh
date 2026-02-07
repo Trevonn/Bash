@@ -245,13 +245,3 @@ gpu_power_cap() {
         cat "$cap"
     fi
 }
-
-# Misc
-
-nas_backup() {
-    timestamp=$(date +"%Y-%m-%d")
-    backup_folder="/mnt/NAS/Backup/Auto/$timestamp"
-    mkdir "$backup_folder"
-    backup_file="$backup_folder/$1 - Backup - $timestamp.tar.zst"
-    tar -I "zstd --ultra -22 -T$(nproc)" -cf "$backup_file" "$2"
-}
