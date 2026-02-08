@@ -211,7 +211,8 @@ extract_ps3_disc() {
 }
 
 github_download() {
-    # $1 = file extension of the file to be downloaded
+    # $1 - file extension of the file to be downloaded
+    # $2 - JSON url to scrape the links from
     wcurl $(curl -s $2 | jq -r .assets.[].browser_download_url | grep $1)
 }
 
