@@ -139,6 +139,9 @@ if [[ -f /usr/bin/mkvmerge ]] then
     }
 
     remove_tracks() {
+        # $1 - Video file
+        # $2 - Track ID of audio track to keep
+        # $3 - Track ID of subtitle track to keep
         mkvmerge -o "Muxed/$1" -a $2 -s $3 "$1"
     }
 
