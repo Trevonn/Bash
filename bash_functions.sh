@@ -8,6 +8,7 @@ mkcd() {
 }
 
 nvme_health() {
+    # $1 - NVME device number
     sudo nvme smart-log -H /dev/nvme$1
 }
 
