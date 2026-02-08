@@ -16,6 +16,7 @@ to_7z() {
 }
 
 to_zst() {
+    # $1 - file or folder to be compressed
     tar -I "zstd --ultra -22 -T$(nproc)" -cf $1.tar.zst $1
 }
 
@@ -141,6 +142,7 @@ if [[ -f /usr/bin/mkvmerge ]] then
     }
 
     to_mkv() {
+        # $1 - File extension to convert
         find -type f -iname "*.$1" | parallel mkvmerge -o "{.}.mkv" "{}"
     }
 
