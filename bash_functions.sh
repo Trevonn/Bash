@@ -220,13 +220,20 @@ github_download() {
 }
 
 download_protonge() {
-    local dest="$XDG_DATA_HOME/Steam/compatibilitytools.d/GE-Proton-latest"
-    rm -rf "$dest"
-    github_download .tar.gz "https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest"
-    mkdir "$dest"
-    tar -xf GE-Proton*.tar.gz -C "$dest" --strip-components 1
-    ln -s $HOME/Sync/Config/Gaming/Proton/$HOSTNAME/user_settings.py "$dest"/user_settings.py
-    rm ./GE-Proton*.tar.gz
+    local protonge_file='/mnt/NAS/Temp/ProtonGE/GE-Proton-latest.tar.gz'
+
+    if [[ $HOSTNAME == 'nas' ]] then
+        github_download .tar.gz "https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest"
+        mv GE-Proton*.tar.gz $protonge_file
+    else
+        local dest="$XDG_DATA_HOME/Steam/compatibilitytools.d/GE-Proton-latest"
+        rm -rf "$dest"
+        scp $USER@nas:$protonge_file $PWD
+        mkdir "$dest"
+        tar -xf GE-Proton-latest.tar.gz -C "$dest" --strip-components 1
+        ln -s $HOME/Sync/Config/Gaming/Proton/$HOSTNAME/user_settings.py "$dest"/user_settings.py
+        rm ./GE-Proton*.tar.gz
+    fi
 }
 
 # Gaming - GPU
