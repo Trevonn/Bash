@@ -165,7 +165,7 @@ if [[ -f /usr/bin/mkvmerge ]] then
 fi
 
 if [[ -f /usr/bin/ffmpeg ]] then
-    rencode_10() {
+    rencode() {
         # $1 Video file type
         # if the input file is mkv output the file in a different directory
         local video_list=()
@@ -180,7 +180,7 @@ if [[ -f /usr/bin/ffmpeg ]] then
         readarray -t video_list < <(find -type f -name "*.$1")
 
         for video in "${video_list[@]}"; do
-            ffmpeg -nostdin -vaapi_device /dev/dri/renderD128 -i "$video" -vf 'format=nv12,hwupload' -c:v av1_vaapi -b:v 10M -c:a copy "$dest/${video%.*}.mkv"
+            ffmpeg -nostdin -vaapi_device /dev/dri/renderD128 -i "$video" -vf 'format=nv12,hwupload' -c:v av1_vaapi -b:v $2M -c:a copy "$dest/${video%.*}.mkv"
         done
     }
 fi
