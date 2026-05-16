@@ -204,13 +204,8 @@ fi
 
 # Gaming
 
-# Gaming - Emulation
-
-# Extracts mounted PS3 disc to the RPCS3 disc folder
-# $1 Name of the game
-extract_ps3_disc() {
-    local dest=$HOME/Games/Emulation/ROMS/Sony/PS3/games/"$1"
-    rsync -ahW --info=progress2 --no-compress --mkpath --chmod=755 {PS3_GAME,PS3_DISC.SFB} "$dest"
+vulkan_git_test() {
+    $HOME/Sync/Scripts/Gaming/Mesa/mesa_git.sh vkcube
 }
 
 github_download() {
