@@ -198,7 +198,18 @@ if [[ -f /usr/lib/jellyfin-ffmpeg/ffmpeg ]] then
     remove_dolby_vision() {
         mkvpropedit "$1" --delete-attachment mime-type:image/png
         mkvpropedit "$1" --delete-attachment mime-type:image/jpeg
-        /usr/lib/jellyfin-ffmpeg/ffmpeg -y -hide_banner -stats -fflags +genpts+igndts -loglevel error -i "$1" -map 0 -bsf:v hevc_metadata=remove_dovi=1 -codec copy -max_muxing_queue_size 2048 -max_interleave_delta 0 -avoid_negative_ts disabled "${1%.*}-nodv.mkv"
+        mv "$1" "$1".bak
+        /usr/lib/jellyfin-ffmpeg/ffmpeg -y -hide_banner -stats -fflags +genpts+igndts -loglevel error -i "$1".bak -map 0 -bsf:v hevc_metadata=remove_dovi=1 -codec copy -max_muxing_queue_size 2048 -max_interleave_delta 0 -avoid_negative_ts disabled "$1"
+        if [[ $(stat --printf="%s" "$1") == 0 ]] then
+            rm "$1"
+        fi
+        if [[ -f "$1" ]] then
+            echo "Dolby vision removed"
+            rm "$1".bak
+        else
+            mv "$1".bak "$1"
+            echo "Mission failed we'll get em next time"
+        fi
     }
 fi
 
