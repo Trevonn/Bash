@@ -30,7 +30,7 @@ if [[ -f /usr/bin/docker ]] then
     }
 
     docker_update() {
-        docker_file="$HOME/Sync/Scripts/Docker/docker-compose.yaml"
+        local docker_file="$HOME/Sync/Scripts/Docker/docker-compose.yaml"
         docker-compose -f $docker_file pull
         docker-compose -f $docker_file up -d
         docker image prune -af
@@ -51,6 +51,46 @@ if [[ -f /usr/bin/flatpak ]] then
         flatpak uninstall $1 --delete-data
     }
 fi
+
+update() {
+    if [[ -f /usr/bin/pacman ]] then
+        sudo pacman -Syu
+        if [[ -f /usr/bin/yay ]] then
+            yay -a
+        fi
+        if [[ -f /usr/bin/paccache ]] then
+            paccache -r -k 0
+        fi
+    elif [[ -f /usr/bin/dnf ]] then
+        sudo dnf upgrade
+    elif [[ -f /usr/bin/apt ]] then
+        sudo apt update && sudo apt upgrade
+    fi
+
+    if [[ -f /usr/bin/flatpak ]] then
+        flatpak update && flatpak remove --unused
+    fi
+
+    if [[ -f /usr/bin/docker ]] then
+        docker_update
+    fi
+
+    if [[ -f /usr/bin/fwupdmgr ]] then
+        fwupdmgr refresh
+        fwupdmgr get-updates
+        fwupdmgr update
+    fi
+}
+
+remove() {
+    if [[ -f /usr/bin/pacman ]] then
+        sudo pacman -Rncs $1
+    elif [[ -f /usr/bin/dnf ]] then
+        sudo dnf remove $1
+    elif [[ -f /usr/bin/apt ]] then
+        sudo apt remove $1
+    fi
+}
 
 if [[ -f /usr/bin/pacman ]] then
     pacin() {
@@ -260,7 +300,6 @@ reset_gpu() {
 
 gpu_power_cap() {
     local cap="$(find /sys/class/drm/card1/device/hwmon -type f -name power1_cap)"
-
     if [[ -f "$cap" ]] then
         cat "$cap"
     fi
