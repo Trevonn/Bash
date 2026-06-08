@@ -7,7 +7,7 @@ sys_info() {
 
     # Helper function to check if a file exists
     is_installed() {
-        if [[ -f $1 ]] then
+        if [[ -f $1 ]]; then
             echo "Installed"
         else
             echo "Not installed"
@@ -86,10 +86,14 @@ sys_check() {
 # Template for DXVK and VKD3D-Proton Github issues
 dxvk_template() {
     sys_info
+    local proton_version
+    local dxvk_version
+    local vkd3d_proton_version
     local proton_location=$HOME/"Games/Steam/steamapps/common/Proton - Experimental"
-    local proton_version="proton-$(cat "$proton_location/version" | awk '{print $2}')"
-    local dxvk_version="Commit: $(cat "$proton_location/files/lib/wine/dxvk/version" | cut -b 2-8)"
-    local vkd3d_proton_version="Commit: $(cat "$proton_location/files/lib/wine/vkd3d-proton/version" | cut -b 2-8)"
+
+    dxvk_version="Commit: $(cat "$proton_location/files/lib/wine/dxvk/version" | cut -b 2-8)"
+    proton_version="proton-$(cat "$proton_location/version" | awk '{print $2}')"
+    vkd3d_proton_version="Commit: $(cat "$proton_location/files/lib/wine/vkd3d-proton/version" | cut -b 2-8)"
 
     echo "### System Information"
     echo "- CPU            : $cpu_name"
