@@ -31,6 +31,10 @@ if [[ -f /usr/bin/pacman ]]; then
         fi
     }
 
+    remove() {
+        sudo pacman -Rncs "$1"
+    }
+
     pacin() {
         sudo pacman -U ./*."$1"
     }
@@ -205,10 +209,11 @@ fi
 if [[ -f /usr/bin/ffmpeg ]]; then
     rencode() {
         # $1 Video file type
+        # $2 Bitrate in megabits
         # if the input file is mkv output the file in a different directory
         local video_list=()
 
-        if [[ $1 != "mkv" ]]; then
+        if [[ $1 != "mp4" ]]; then
             dest="."
         else
             dest="Re-Encoded"
@@ -218,7 +223,7 @@ if [[ -f /usr/bin/ffmpeg ]]; then
         readarray -t video_list < <(find . -type f -name "*.$1")
 
         for video in "${video_list[@]}"; do
-            ffmpeg -nostdin -vaapi_device /dev/dri/renderD128 -i "$video" -vf 'format=nv12,hwupload' -c:v av1_vaapi -b:v "$2"M -c:a copy "$dest/${video%.*}.mkv"
+            ffmpeg -nostdin -vaapi_device /dev/dri/renderD128 -i "$video" -vf 'format=nv12,hwupload' -c:v av1_vaapi -b:v "$2"M -c:a copy "$dest/${video%.*}.mp4"
         done
     }
 fi
@@ -226,7 +231,7 @@ fi
 
 if [[ -f /usr/bin/cjxl ]]; then
     to_jxl() {
-        find . -type f -iname "*.$1" | parallel cjxl "{}" "{.}.jxl"
+        find . -type f -iname "*.$1" | parallel cjxl "{}" "{.}.jxl --effort=10"
     }
 fi
 
@@ -264,21 +269,33 @@ github_download() {
     wcurl "$(curl -s $2 | jq -r .assets.[].browser_download_url | grep $1)"
 }
 
-download_protonge() {
-    local protonge_file='/mnt/NAS/Temp/ProtonGE/GE-Proton-latest.tar.gz'
+download_proton() {
+    # $1 = folder name
+    # $2 = file name
+    # $3 = file extension
+    # $4 = repo name
+    local proton_file="/mnt/NAS/Temp/$1/$2-latest$3"
 
     if [[ $HOSTNAME == 'nas' ]]; then
-        github_download .tar.gz "https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest"
-        mv GE-Proton*.tar.gz $protonge_file
+        github_download "$3" "https://api.github.com/repos/$4/releases/latest"
+        mv "$2"*"$3" "$proton_file"
     else
-        local dest="$XDG_DATA_HOME/Steam/compatibilitytools.d/GE-Proton-latest"
+        local dest="$XDG_DATA_HOME/Steam/compatibilitytools.d/$2-latest"
         rm -rf "$dest"
-        scp "$USER@nas:$protonge_file" "$PWD"
+        scp "$USER@nas:$proton_file" "$PWD"
         mkdir "$dest"
-        tar -xf GE-Proton-latest.tar.gz -C "$dest" --strip-components 1
+        tar -xf "$2-latest.tar.gz" -C "$dest" --strip-components 1
         ln -s "$HOME/Sync/Config/Gaming/Proton/$HOSTNAME/user_settings.py" "$dest"/user_settings.py
-        rm ./GE-Proton*.tar.gz
+        rm ./"$2"*.tar.gz
     fi
+}
+
+download_protonge() {
+    download_proton ProtonGE GE-Proton .tar.gz GloriousEggroll/proton-ge-custom
+}
+
+download_protoncachyos() {
+    download_proton Proton-CachyOS proton-cachyos .tar.xz CachyOS/proton-cachyos
 }
 
 # Gaming - GPU
