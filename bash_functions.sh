@@ -274,28 +274,32 @@ download_proton() {
     # $2 = file name
     # $3 = file extension
     # $4 = repo name
-    local proton_file="/mnt/NAS/Temp/$1/$2-latest$3"
+    local proton_file="/mnt/NAS/Temp/Proton/$1/$2-latest$3"
 
     if [[ $HOSTNAME == 'nas' ]]; then
-        github_download "$3" "https://api.github.com/repos/$4/releases/latest"
+        if [[ "$4" == "CachyOS/proton-cachyos" ]]; then
+            github_download "x86_64.tar.xz" "https://api.github.com/repos/$4/releases/latest"
+        else
+            github_download "$3" "https://api.github.com/repos/$4/releases/latest"
+        fi
         mv "$2"*"$3" "$proton_file"
     else
         local dest="$XDG_DATA_HOME/Steam/compatibilitytools.d/$2-latest"
         rm -rf "$dest"
         scp "$USER@nas:$proton_file" "$PWD"
         mkdir "$dest"
-        tar -xf "$2-latest.tar.gz" -C "$dest" --strip-components 1
+        tar -xf "$2-latest$3" -C "$dest" --strip-components 1
         ln -s "$HOME/Sync/Config/Gaming/Proton/$HOSTNAME/user_settings.py" "$dest"/user_settings.py
-        rm ./"$2"*.tar.gz
+        rm ./"$2"*"$3"
     fi
 }
 
 download_protonge() {
-    download_proton ProtonGE GE-Proton .tar.gz GloriousEggroll/proton-ge-custom
+    download_proton proton-ge GE-Proton .tar.gz GloriousEggroll/proton-ge-custom
 }
 
 download_protoncachyos() {
-    download_proton Proton-CachyOS proton-cachyos .tar.xz CachyOS/proton-cachyos
+    download_proton proton-cachyos proton-cachyos .tar.xz CachyOS/proton-cachyos
 }
 
 # Gaming - GPU
