@@ -289,17 +289,24 @@ download_proton() {
         scp "$USER@nas:$proton_file" "$PWD"
         mkdir "$dest"
         tar -xf "$2-latest$3" -C "$dest" --strip-components 1
-        ln -s "$HOME/Sync/Config/Gaming/Proton/$HOSTNAME/user_settings.py" "$dest"/user_settings.py
         rm ./"$2"*"$3"
     fi
 }
 
 download_protonge() {
     download_proton proton-ge GE-Proton .tar.gz GloriousEggroll/proton-ge-custom
+    if [[ $HOSTNAME != 'nas' ]]; then
+        local dest="$XDG_DATA_HOME/Steam/compatibilitytools.d/GE-Proton-latest"
+        ln -s "$HOME/Sync/Config/Gaming/Proton/$HOSTNAME/user_settings.py" "$dest"/user_settings.py
+    fi
 }
 
 download_protoncachyos() {
     download_proton proton-cachyos proton-cachyos .tar.xz CachyOS/proton-cachyos
+    if [[ $HOSTNAME != 'nas' ]]; then
+        local dest="$XDG_DATA_HOME/Steam/compatibilitytools.d/proton-cachyos-latest"
+        ln -s "$HOME/Sync/Config/Gaming/Proton/proton-cachyos/user_settings.py"  "$dest"/user_settings.py
+    fi
 }
 
 # Gaming - GPU
