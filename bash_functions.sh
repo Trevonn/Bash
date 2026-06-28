@@ -274,7 +274,7 @@ download_proton() {
     local tar_file="$1.$3"
     local nas_dest="/mnt/NAS/Temp/Proton/$1/$tar_file"
     if [[ $HOSTNAME == "nas" ]]; then
-        wcurl --curl-options="--clobber --continue-at -" -o "$nas_dest" "$(curl -s $2 | $jq_cmd | $4)"
+        wcurl --curl-options="--clobber" -o "$nas_dest" "$(curl -s $2 | $jq_cmd | $4)"
     else
         local dest="$XDG_DATA_HOME/Steam/compatibilitytools.d/$1-latest"
         if [[ -d "$dest" ]] then
