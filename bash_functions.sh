@@ -261,17 +261,6 @@ fi
 
 # Gaming
 
-vulkan_git_test() {
-    "$HOME/Sync/Scripts/Gaming/Mesa/mesa_git.sh" vulkaninfo | grep driverVersion
-    "$HOME/Sync/Scripts/Gaming/Mesa/mesa_git.sh" vkcube
-}
-
-github_download() {
-    # $1 - file extension of the file to be downloaded
-    # $2 - JSON url to scrape the links from
-    wcurl "$(curl -s $2 | jq -r .assets.[].browser_download_url | grep $1)"
-}
-
 download_proton() {
     local jq_cmd="jq -r .assets.[].browser_download_url"
     local tar_file="$1.$3"
@@ -280,7 +269,7 @@ download_proton() {
         wcurl --curl-options="--clobber" -o "$nas_dest" "$(curl -s $2 | $jq_cmd | $4)"
     else
         local dest="$XDG_DATA_HOME/Steam/compatibilitytools.d/$1-latest"
-        if [[ -d "$dest" ]] then
+        if [[ -d "$dest" ]]; then
             sudo rm -r "$dest"
         fi
         scp "$USER@nas:$nas_dest" "$PWD"
