@@ -18,6 +18,45 @@ to_zst() {
 
 # Package Management
 
+# Docker
+
+if [[ -f /usr/bin/docker ]]; then
+    docker_kill() {
+        # $1 - Container ID
+        docker kill "$1"
+        docker rm "$1"
+        docker container prune
+    }
+
+    docker_update() {
+        local docker_file="$HOME/Sync/Scripts/Docker/docker-compose.yaml"
+        docker-compose -f "$docker_file" pull
+        docker-compose -f "$docker_file" up -d
+        docker image prune -af
+    }
+fi
+
+# Flatpak
+
+if [[ -f /usr/bin/flatpak ]]; then
+    remove_flatpak() {
+        flatpak uninstall --all --delete-data
+        rm -r "$HOME/.var"
+        rm -r "$XDG_CACHE_HOME/flatpak"
+        rm -r "$XDG_STATE_HOME/flatpak"
+        sudo rm -r /var/lib/flatpak
+        sudo pacman -Rncs flatpak
+    }
+
+    remove_flatpak_app() {
+        flatpak uninstall "$1" --delete-data
+    }
+
+    update_flatpak() {
+        flatpak update && flatpak remove --unused
+    }
+fi
+
 # Arch Linux
 
 if [[ -f /usr/bin/pacman ]]; then
@@ -28,6 +67,9 @@ if [[ -f /usr/bin/pacman ]]; then
         fi
         if [[ -f /usr/bin/paccache ]]; then
             paccache -r -k 0
+        fi
+        if [[ -f /usr/bin/flatpak ]]; then
+            update_flatpak
         fi
     }
 
@@ -81,45 +123,6 @@ if [[ -f /usr/bin/pacman ]]; then
             sudo rm -r $kernel
         }
     fi
-fi
-
-# Docker
-
-if [[ -f /usr/bin/docker ]]; then
-    docker_kill() {
-        # $1 - Container ID
-        docker kill "$1"
-        docker rm "$1"
-        docker container prune
-    }
-
-    docker_update() {
-        local docker_file="$HOME/Sync/Scripts/Docker/docker-compose.yaml"
-        docker-compose -f "$docker_file" pull
-        docker-compose -f "$docker_file" up -d
-        docker image prune -af
-    }
-fi
-
-# Flatpak
-
-if [[ -f /usr/bin/flatpak ]]; then
-    remove_flatpak() {
-        flatpak uninstall --all --delete-data
-        rm -r "$HOME/.var"
-        rm -r "$XDG_CACHE_HOME/flatpak"
-        rm -r "$XDG_STATE_HOME/flatpak"
-        sudo rm -r /var/lib/flatpak
-        sudo pacman -Rncs flatpak
-    }
-
-    remove_flatpak_app() {
-        flatpak uninstall "$1" --delete-data
-    }
-
-    update_flatpak() {
-        flatpak update && flatpak remove --unused
-    }
 fi
 
 # Fedora
