@@ -202,9 +202,7 @@ if [[ -f /usr/bin/mkvmerge ]]; then
     }
 
     add_subs() {
-        local video_ext=""
-        read -rp "Video File Extension Type: " video_ext
-        find . -type f -iname "*.$video_ext" \
+        find . -type f -iname "*.$1" \
             | parallel mkvmerge -o "Muxed/{.}.mkv" "{}" "{.}"*.srt
     }
 fi
@@ -264,9 +262,9 @@ fi
 download_proton() {
     local jq_cmd="jq -r .assets.[].browser_download_url"
     local tar_file="$1.$3"
-    local nas_dest="/mnt/NAS/Temp/Proton/$1/$tar_file"
+    local nas_dest="/mnt/NAS/Backup/Linux/Proton/$1/$tar_file"
     if [[ $HOSTNAME == "nas" ]]; then
-        wcurl --curl-options="--clobber" -o "$nas_dest" "$(curl -s $2 | $jq_cmd | $4)"
+        wcurl --curl-options="--clobber" -o "$nas_dest" "$(curl -s "$2" | $jq_cmd | $4)"
     else
         local dest="$XDG_DATA_HOME/Steam/compatibilitytools.d/$1-latest"
         if [[ -d "$dest" ]]; then
