@@ -53,7 +53,7 @@ if [[ -f /usr/bin/flatpak ]]; then
     }
 
     update_flatpak() {
-        flatpak update && flatpak remove --unused
+        flatpak update --no-static-deltas && flatpak remove --unused
     }
 fi
 
@@ -61,14 +61,18 @@ fi
 
 if [[ -f /usr/bin/pacman ]]; then
     update() {
+        echo -e "\e[32;1mPacman\e[0m"
         sudo pacman -Syu
         if [[ -f /usr/bin/yay ]]; then
+            echo -e "\e[32;1mYay (AUR)\e[0m"
             yay -a
         fi
         if [[ -f /usr/bin/paccache ]]; then
+            echo -e "\e[32;1mPaccache\e[0m"
             paccache -r -k 0
         fi
         if [[ -f /usr/bin/flatpak ]]; then
+            echo -e "\e[32;1mFlatpak\e[0m"
             update_flatpak
         fi
     }
@@ -82,7 +86,9 @@ if [[ -f /usr/bin/pacman ]]; then
     }
 
     storage_cleanup() {
-        yay -Scc
+        if [[ -f /usr/bin/yay ]]; then
+            yay -Scc
+        fi
         sudo rm -r /var/log/*
         echo "Cleared /var/log/"
         sudo rm -r /var/cache/*
