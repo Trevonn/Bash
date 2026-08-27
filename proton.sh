@@ -28,10 +28,16 @@ else
         local proton="proton-$1"
         local dest="$XDG_DATA_HOME/Steam/compatibilitytools.d/$proton-latest"
         local tar_file="$proton.$2"
+        if [[ -d $dest ]]; then
+            sudo rm -r "$dest"
+            scp "$USER@nas:/mnt/NAS/Backup/Linux/Proton/$proton/$tar_file" "$PWD"
+            tar -xf "$tar_file" --one-top-level="$dest" --strip-components 1
+            ln -sf "$HOME/Sync/Config/Gaming/Proton/$proton/$HOSTNAME/user_settings.py" "$dest"/user_settings.py
+        fi
 
-        scp "$USER@nas:/mnt/NAS/Backup/Linux/Proton/$proton/$tar_file" "$PWD"
-        tar -xf "$tar_file" --one-top-level="$dest" --strip-components 1
-        ln -sf "$HOME/Sync/Config/Gaming/Proton/$proton/$HOSTNAME/user_settings.py" "$dest"/user_settings.py
+        if [[ -f $tar_file ]]; then
+            rm "$tar_file"
+        fi
     }
 
     download_protonge() {
