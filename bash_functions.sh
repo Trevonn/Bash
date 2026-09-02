@@ -16,6 +16,10 @@ to_zst() {
     tar -I "zstd --ultra -22 -T$(nproc)" -cf "$1".tar.zst "$1"
 }
 
+sys_check() {
+    uv run sys-check
+}
+
 # Package Management
 
 # Docker
