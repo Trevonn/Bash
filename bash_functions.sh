@@ -253,9 +253,10 @@ if [[ -f /usr/lib/jellyfin-ffmpeg/ffmpeg ]]; then
         if [[ $(stat --printf="%s" "$1") == 0 ]]; then
             rm "$1"
         fi
+
         if [[ -f "$1" ]]; then
             echo "Dolby vision removed"
-            rm "$1".bak
+            trash "$1".bak
         else
             mv "$1".bak "$1"
             echo "Mission failed we'll get em next time"
