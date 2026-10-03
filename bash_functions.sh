@@ -4,7 +4,7 @@
 
 nvme_health() {
     # $1 - NVME device number
-    sudo nvme smart-log -H /dev/nvme"$1"
+    run0 nvme smart-log -H /dev/nvme"$1"
 }
 
 to_7z() {
@@ -65,7 +65,7 @@ fi
 if [[ -f /usr/bin/pacman ]]; then
     update() {
         echo -e "\e[32;1mPacman\e[0m"
-        sudo pacman -Syu
+        run0 pacman -Syu
         if [[ -f /usr/bin/yay ]]; then
             echo -e "\e[32;1mYay (AUR)\e[0m"
             yay -a
@@ -81,22 +81,22 @@ if [[ -f /usr/bin/pacman ]]; then
     }
 
     remove() {
-        sudo pacman -Rncs "$1"
+        run0 pacman -Rncs "$1"
     }
 
     pacin() {
-        sudo pacman -U ./*."$1"
+        run0 pacman -U ./*."$1"
     }
 
     storage_cleanup() {
         if [[ -f /usr/bin/yay ]]; then
             yay -Scc
         fi
-        sudo rm -r /var/log/*
+        run0 rm -r /var/log/*
         echo "Cleared /var/log/"
-        sudo rm -r /var/cache/*
+        run0 rm -r /var/cache/*
         echo "Cleared /var/cache/"
-        sudo rm /var/lib/systemd/coredump/*
+        run0 rm /var/lib/systemd/coredump/*
         echo "Cleared /var/lib/systemd/coredump"
     }
 
@@ -123,13 +123,13 @@ if [[ -f /usr/bin/pacman ]]; then
             elif [[ $option == 2 ]]; then
                 kernel="linux-lts"
             fi
-            sudo rm -r $kernel
+            run0 rm -r $kernel
             download_arch_package $kernel
             cd $kernel || { echo "Unable to cd to $kernel"; exit 1; }
             patch_kernel $kernel
             time makepkg -s --skipinteg --asdeps
             cd ../
-            sudo rm -r $kernel
+            run0 rm -r $kernel
         }
     fi
 fi
@@ -138,11 +138,11 @@ fi
 
 if [[ -f /usr/bin/dnf ]]; then
     update() {
-        sudo dnf upgrade
+        run0 dnf upgrade
     }
 
     remove() {
-        sudo dnf remove "$1"
+        run0 dnf remove "$1"
     }
 fi
 
@@ -150,11 +150,11 @@ fi
 
 if [[ -f /usr/bin/apt ]]; then
     update() {
-        sudo apt update && sudo apt upgrade
+        run0 apt update && run0 apt upgrade
     }
 
     remove() {
-        sudo apt remove "$1"
+        run0 apt remove "$1"
     }
 fi
 
@@ -275,14 +275,14 @@ change_gpu_state() {
     local gpu_level="/sys/class/drm/card1/device/power_dpm_force_performance_level"
     echo "Current GPU Level: $(cat $gpu_level)"
     echo "Setting GPU Level to $1"
-    echo "$1" | sudo tee "$gpu_level" > /dev/null
+    echo "$1" | run0 tee "$gpu_level" > /dev/null
     echo "Current GPU Level: $(cat $gpu_level)"
 }
 
 reset_gpu() {
     local gpu_config_file="/sys/class/drm/card1/device/pp_od_clk_voltage"
-    echo "r" | sudo tee $gpu_config_file > /dev/null
-    echo "c" | sudo tee $gpu_config_file > /dev/null
+    echo "r" | run0 tee $gpu_config_file > /dev/null
+    echo "c" | run0 tee $gpu_config_file > /dev/null
 }
 
 gpu_power_cap() {
