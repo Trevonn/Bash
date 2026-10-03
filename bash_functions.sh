@@ -67,10 +67,10 @@ if [[ -f /usr/bin/pacman ]]; then
             echo -e "\e[32;1mYay (AUR)\e[0m"
             yay -a
         fi
-        if [[ -f /usr/bin/paccache ]]; then
-            echo -e "\e[32;1mPaccache\e[0m"
-            paccache -r -k 0
-        fi
+        # if [[ -f /usr/bin/paccache ]]; then
+        #     echo -e "\e[32;1mPaccache\e[0m"
+        #     paccache -r -k 0
+        # fi
         if [[ -f /usr/bin/flatpak ]]; then
             echo -e "\e[32;1mFlatpak\e[0m"
             update_flatpak
