@@ -38,15 +38,18 @@ fi
 
 # Flatpak
 
-if [[ -f /usr/bin/flatpak ]]; then
-    remove_flatpak() {
+remove_flatpak() {
+    if [[ -f /usr/bin/flatpak ]]; then
         flatpak uninstall --all --delete-data
-        rm -r "$HOME/.var"
-        rm -r "$XDG_CACHE_HOME/flatpak"
-        rm -r "$XDG_STATE_HOME/flatpak"
-        sudo rm -r /var/lib/flatpak
-        sudo pacman -Rncs flatpak
-    }
+        run0 pacman -Rncs flatpak
+    fi
+    rm -r "$HOME/.var"
+    rm -r "$XDG_CACHE_HOME/flatpak"
+    rm -r "$XDG_STATE_HOME/flatpak"
+    run0 rm -r /var/lib/flatpak
+}
+
+if [[ -f /usr/bin/flatpak ]]; then
 
     remove_flatpak_app() {
         flatpak uninstall "$1" --delete-data
