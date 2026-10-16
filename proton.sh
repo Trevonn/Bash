@@ -33,6 +33,10 @@ else
             scp "$USER@nas:/mnt/NAS/Backup/Linux/Proton/$proton/$tar_file" "$PWD"
             tar -xf "$tar_file" --one-top-level="$dest" --strip-components 1
             ln -sf "$HOME/Sync/Config/Gaming/Proton/$proton/$HOSTNAME/user_settings.py" "$dest"/user_settings.py
+        else
+            echo "$dest not found"
+            mkdir "$dest"
+            download_proton "$1" "$2"
         fi
 
         if [[ -f $tar_file ]]; then
